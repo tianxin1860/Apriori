@@ -66,7 +66,8 @@ def ComputeAccuracy():
                 print
             while i < blank_count:
                 result = []
-                list_result = FindPossible(line[index_list[i]-1])
+                temp_list = FindPossible(line[index_list[i]-1])
+                list_result = temp_list.extend(FindPossible(line[index_list[i]+1]))
                 correct_word = line[index_list[i]]
                 if _DEBUG == True:
                     print "blank %d:%s" %(i, correct_word)
