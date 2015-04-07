@@ -71,7 +71,7 @@ def runApriori(data_iter, minSupport, minConfidence):
     # which satisfy minSupport
 
     assocRules = dict()
-    # Dictionary which stores Association Rules
+    # Dictionary which stores Associatggggion Rules
 
     oneCSet = returnItemsWithMinSupport(itemSet,
                                         transactionList,
@@ -103,6 +103,9 @@ def runApriori(data_iter, minSupport, minConfidence):
     for key, value in largeSet.items()[1:]:
         for item in value:
             _subsets = map(frozenset, [x for x in subsets(item)])
+            print "***************************************************************"
+            print _subsets
+            print "***************************************************************\n"
             for element in _subsets:
                 remain = item.difference(element)
                 if len(remain) > 0:
@@ -128,7 +131,8 @@ def dataFromFile(fname):
         file_iter = open(fname, 'rU')
         for line in file_iter:
                 line = line.strip().rstrip(',')                         # Remove trailing comma
-                record = frozenset(line.split(','))
+                #record = frozenset(line.split(','))
+                record = frozenset(line.split(' '))
                 yield record
 
 
