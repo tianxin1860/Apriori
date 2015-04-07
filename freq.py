@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # coding=utf-8
 
-_DEBUG = False
+#_DEBUG = False
+_DEBUG = True
 
 from collections import defaultdict
 import sys
@@ -42,7 +43,7 @@ with open(sys.argv[1], 'r') as InputFile:
 
 def ComputeAccuracy():
     total_blank = 0
-    right_count = 0
+    right_count = [0] * 20
     sentence_count = 0
     with open(sys.argv[2], 'r') as TestFile:
         line = TestFile.readline()
@@ -62,31 +63,37 @@ def ComputeAccuracy():
             if _DEBUG == True:
                 print "sentence %d:" %sentence_count
                 print sentence
+                print
             while i < blank_count:
                 result = []
                 list_result = FindPossible(line[index_list[i]-1])
                 correct_word = line[index_list[i]]
                 if _DEBUG == True:
                     print "blank %d:%s" %(i, correct_word)
-                    print list_result
+                    #print list_result
                 for word_pair in list_result:
                     candidate =  word_pair[0].split(' ')
                     candidate.remove(line[index_list[i]-1])
                     item_result = (candidate[0], word_pair[1])
                     result.append(item_result)
                 if _DEBUG == True:
-                    print "result:"    
+                    print "result:%d" % len(result)    
                     print result
-                for word in result:
-                    if word[0] == correct_word:
-                        right_count += 1
+                for set_size in range(1, 21):  
+                    for word in result[0:set_size]:
+                        if word[0] == correct_word:
+                            right_count[set_size-1] += 1
                 i += 1
+                if _DEBUG == True:
+                    print
             if _DEBUG == True:
                 print "\n"    
             line = TestFile.readline()    
-    accuracy =float(right_count)/total_blank        
-    print "test number:%d   total_blank:%d    right_count:%d    accuracy:%f" %(sentence_count, total_blank, right_count, accuracy)
-
+    set_size = 0        
+    for right in right_count:
+        set_size += 1
+        accuracy =float(right)/total_blank        
+        print "test number:%d   set_size:%-2d    total_blank:%d    right_count:%-2d    accuracy:%f"  %(sentence_count, set_size, total_blank, right, accuracy)
 
 
 def GenerateRandom(count, length):
