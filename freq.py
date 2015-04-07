@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # coding=utf-8
 
-#_DEBUG = False
-_DEBUG = True
+_DEBUG = False
+#_DEBUG = True
 
 from collections import defaultdict
 import sys
@@ -25,13 +25,14 @@ def mysort(ResultList):
 
 
 def FindPossible(str):
+    '''return list, element is a tuple ,the key contains str, value is the times of concurrence'''
     ResultList = []
     for key in DICT.keys():
         set = frozenset(key.split(' '))
         if str in set:
             tuple = (key, DICT[key])
             ResultList.append(tuple)
-    return mysort(ResultList)
+    return ResultList
 
 with open(sys.argv[1], 'r') as InputFile:
     line = InputFile.readline()
@@ -66,22 +67,29 @@ def ComputeAccuracy():
                 print
             while i < blank_count:
                 result = []
-                temp_list = FindPossible(line[index_list[i]-1])
-                list_result = temp_list.extend(FindPossible(line[index_list[i]+1]))
+                temp_list_left = FindPossible(line[index_list[i]-1])
+                temp_list_right = FindPossible(line[index_list[i]+1])
+                list_result = temp_list_left + temp_list_right
                 correct_word = line[index_list[i]]
                 if _DEBUG == True:
                     print "blank %d:%s" %(i, correct_word)
                     #print list_result
-                for word_pair in list_result:
+                for word_pair in temp_list_left:
                     candidate =  word_pair[0].split(' ')
                     candidate.remove(line[index_list[i]-1])
                     item_result = (candidate[0], word_pair[1])
                     result.append(item_result)
+                for word_pair in temp_list_right:
+                    candidate =  word_pair[0].split(' ')
+                    candidate.remove(line[index_list[i]+1])
+                    item_result = (candidate[0], word_pair[1])
+                    result.append(item_result)
+                result_list = mysort(result)    
                 if _DEBUG == True:
                     print "result:%d" % len(result)    
                     print result
                 for set_size in range(1, 21):  
-                    for word in result[0:set_size]:
+                    for word in result_list[0:set_size]:
                         if word[0] == correct_word:
                             right_count[set_size-1] += 1
                 i += 1
