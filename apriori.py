@@ -8,6 +8,7 @@ Usage:
 """
 
 import sys
+import types
 
 from itertools import chain, combinations
 from collections import defaultdict
@@ -16,6 +17,9 @@ from optparse import OptionParser
 
 def subsets(arr):
     """ Returns non empty subsets of arr"""
+    #combinations(arr, i) return combinations of arr, i is the number of elenment
+    #enumerate return (index, value) of a sequence data
+    #chain visit elment of every iterators
     return chain(*[combinations(arr, i + 1) for i, a in enumerate(arr)])
 
 
@@ -31,12 +35,11 @@ def returnItemsWithMinSupport(itemSet, transactionList, minSupport, freqSet):
                                 freqSet[item] += 1
                                 localSet[item] += 1
 
+    #return a list, every element is a key-value pair
         for item, count in localSet.items():
                 support = float(count)/len(transactionList)
-
                 if support >= minSupport:
                         _itemSet.add(item)
-
         return _itemSet
 
 
@@ -53,6 +56,9 @@ def getItemSetTransactionList(data_iterator):
         transactionList.append(transaction)
         for item in transaction:
             itemSet.add(frozenset([item]))              # Generate 1-itemSets
+            #itemSet.add(item)              # why not like this?
+    print 'transactionList :', transactionList
+    print 'itemSet :', itemSet
     return itemSet, transactionList
 
 
@@ -65,6 +71,7 @@ def runApriori(data_iter, minSupport, minConfidence):
     """
     itemSet, transactionList = getItemSetTransactionList(data_iter)
 
+    # defaultdict() saves default value for every key.
     freqSet = defaultdict(int)
     largeSet = dict()
     # Global dictionary which stores (key=n-itemSets,value=support)
@@ -82,6 +89,7 @@ def runApriori(data_iter, minSupport, minConfidence):
     k = 2
     while(currentLSet != set([])):
         largeSet[k-1] = currentLSet
+        #k is length of item
         currentLSet = joinSet(currentLSet, k)
         currentCSet = returnItemsWithMinSupport(currentLSet,
                                                 transactionList,
@@ -101,6 +109,7 @@ def runApriori(data_iter, minSupport, minConfidence):
 
     toRetRules = []
     for key, value in largeSet.items()[1:]:
+        #value is a frequent set corresponding elenment-n
         for item in value:
             _subsets = map(frozenset, [x for x in subsets(item)])
             for element in _subsets:
@@ -128,7 +137,8 @@ def dataFromFile(fname):
         file_iter = open(fname, 'rU')
         for line in file_iter:
                 line = line.strip().rstrip(',')                         # Remove trailing comma
-                record = frozenset(line.split(','))
+                #lisence record = frozenset(line.split(','))
+                record = frozenset(line.split(' '))
                 yield record
 
 
